@@ -7,7 +7,7 @@ on:
         required: true
       key-secret:
         required: true
-        
+
     inputs:
       region: 
         required: true
@@ -35,8 +35,8 @@ jobs:
         id: upload_to_oss
         uses: tvrcgo/upload-to-oss@master
         with:
-          key-id: ${{ inputs.key-id }}
-          key-secret: ${{ inputs.key-secret }}
+          key-id: ${{ secrets.key-id }}
+          key-secret: ${{ secrets.key-secret }}
           region: ${{ inputs.region }}
           bucket: ${{ inputs.bucket }}
           assets: |
