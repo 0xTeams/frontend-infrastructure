@@ -12,6 +12,10 @@ on:
       public-path-prefix:
         required: true
         type: string
+    outputs:
+      application_version:
+        description: "应用版本"
+        value: ${{ jobs.build.outputs.application_version }}
 
 jobs:
   build:
