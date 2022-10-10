@@ -2,15 +2,16 @@ name: Reusable workflow example
 
 on:
   workflow_call:
-    build-run:
-      required: true
-      type: string
-    dist-path:
-      required: true
-      type: string
-    public-path-prefix:
-      required: true
-      type: string
+    inputs:
+      build-run:
+        required: true
+        type: string
+      dist-path:
+        required: true
+        type: string
+      public-path-prefix:
+        required: true
+        type: string
 
 jobs:
   build:
