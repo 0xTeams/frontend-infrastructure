@@ -22,7 +22,6 @@ on:
 jobs:
   notice:
     runs-on: ubuntu-latest
-    environment: development
     env:
       NOTICE_COLOR: ${{ inputs.notice-color }}
       NOTICE_IMAGE: ${{ inputs.notice-image }}
