@@ -1,0 +1,55 @@
+name: Reusable workflow example
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - name: Extract version
+        id: extract_version
+        uses: Saionaro/extract-package-version@v1.0.6
+      - id: commit
+        uses: pr-mpt/actions-commit-hash@v1
+      - id: bash
+        shell: bash
+        run: |
+          export APPLICATION_VERSION="${{ steps.extract_version.outputs.version }}-${{ github.ref_name }}-${{ steps.commit.outputs.short }}"
+          echo "::set-output name=application_version::${APPLICATION_VERSION}"
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.9.1
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        env:
+          PUBLIC_PATH: https://chips-oss.oscac-sh.com/chips-dev.oscac-sh.com/${{ steps.bash.outputs.application_version }}/
+        run: npm run build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-dist-artifact
+          path: build/**
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact-index.html
+          path: build/index.html
+    outputs:
+      application_version: ${{ steps.bash.outputs.application_version }}
