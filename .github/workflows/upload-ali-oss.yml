@@ -2,13 +2,13 @@ name: Upload Ali OSS
 
 on:
   workflow_call:
-    inputs:
+    secrets:
       key-id:
         required: true
-        type: string
       key-secret:
         required: true
-        type: string
+        
+    inputs:
       region: 
         required: true
         type: string
