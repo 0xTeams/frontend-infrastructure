@@ -2,6 +2,15 @@ name: Reusable workflow example
 
 on:
   workflow_call:
+    build-run:
+      required: true
+      type: string
+    dist-path:
+      required: true
+      type: string
+    public-path-prefix:
+      required: true
+      type: string
 
 jobs:
   build:
@@ -11,6 +20,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
+
       - name: Extract version
         id: extract_version
         uses: Saionaro/extract-package-version@v1.0.6
@@ -21,6 +31,7 @@ jobs:
         run: |
           export APPLICATION_VERSION="${{ steps.extract_version.outputs.version }}-${{ github.ref_name }}-${{ steps.commit.outputs.short }}"
           echo "::set-output name=application_version::${APPLICATION_VERSION}"
+          
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7.9.1
@@ -41,15 +52,17 @@ jobs:
 
       - name: Build
         env:
-          PUBLIC_PATH: https://chips-oss.oscac-sh.com/chips-dev.oscac-sh.com/${{ steps.bash.outputs.application_version }}/
-        run: npm run build
+          PUBLIC_PATH: ${{ inputs.public-path-prefix }}${{ steps.bash.outputs.application_version }}/
+        run: ${{ inputs.build-run }}
+
       - uses: actions/upload-artifact@v3
         with:
           name: build-dist-artifact
-          path: build/**
+          path: ${{ inputs.dist-path }}/**
+
       - uses: actions/upload-artifact@v3
         with:
           name: build-artifact-index.html
-          path: build/index.html
+          path: ${{ inputs.dist-path }}/index.html
     outputs:
       application_version: ${{ steps.bash.outputs.application_version }}
