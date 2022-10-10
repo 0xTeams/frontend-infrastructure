@@ -6,6 +6,9 @@ on:
       notice-title:
         required: true
         type: string
+      notice-content:
+        required: true
+        type: string
       notice-color:
         required: true
         type: string
@@ -18,6 +21,9 @@ on:
       button-link:
         required: true
         type: string
+      feishu-webhook-url:
+        required: true
+        type: string
         
 jobs:
   notice:
@@ -27,6 +33,8 @@ jobs:
       NOTICE_IMAGE: ${{ inputs.notice-image }}
       BUTTON_TEXT: ${{ inputs.button-text }}
       BUTTON_LINK: ${{ inputs.button-link }}
+      FEISHU_WEBHOOK: ${{ inputs.feishu-webhook-url }}
+      NOTICE_CONTENT: ${{ inputs.notice-content }}
     steps:
       - uses: actions/checkout@v3
       - shell: bash
