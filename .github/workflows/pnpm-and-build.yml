@@ -1,4 +1,4 @@
-name: Reusable workflow example
+name: PNPM and Build
 
 on:
   workflow_call:

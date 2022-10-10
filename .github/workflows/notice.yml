@@ -1,0 +1,42 @@
+name: deployment
+
+on:
+  workflow_call:
+    inputs:
+      notice-title:
+        required: true
+        type: string
+      notice-color:
+        required: true
+        type: string
+      notice-image:
+        required: true
+        type: string
+      button-text:
+        required: true
+        type: string
+      button-link:
+        required: true
+        type: string
+        
+jobs:
+  notice:
+    runs-on: ubuntu-latest
+    environment: development
+    env:
+      NOTICE_COLOR: ${{ inputs.notice-color }}
+      NOTICE_IMAGE: ${{ inputs.notice-image }}
+      BUTTON_TEXT: ${{ inputs.button-text }}
+      BUTTON_LINK: ${{ inputs.button-link }}
+    steps:
+      - uses: actions/checkout@v3
+      - shell: bash
+        env:
+          NOTICE_TITLE: ${{ inputs.notice-title }}
+        run: |
+          curl -X POST "${FEISHU_WEBHOOK}" \
+          --header 'Content-Type: application/json' \
+          --data-raw "$(cat <<EOF
+          {"msg_type":"interactive","card":{"config":{"wide_screen_mode":true},"header":{"template":"${NOTICE_COLOR}","title":{"content":"${NOTICE_TITLE}","tag":"plain_text"}},"elements":[{"tag":"div","text":{"tag":"lark_md","content":$NOTICE_CONTENT},"extra":{"tag":"img","img_key":"${NOTICE_IMAGE}","alt":{"tag":"plain_text","content":"图片"}}},{"tag":"hr"},{"actions":[{"tag":"button","text":{"content":"${BUTTON_TEXT}","tag":"plain_text"},"type":"primary","url":"${BUTTON_LINK}"}],"tag":"action"}]}}
+          EOF
+          )"

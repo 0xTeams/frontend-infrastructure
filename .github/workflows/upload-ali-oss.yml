@@ -1,0 +1,40 @@
+name: Upload Ali OSS
+
+on:
+  workflow_call:
+    inputs:
+      build-run:
+        required: true
+        type: string
+      region: 
+        required: true
+        type: string
+      bucket: 
+        required: true
+        type: string
+      oss-path:
+        required: true
+        type: string
+        
+jobs:
+  upload:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-dist-artifact
+          path: build
+
+      - name: Upload to oss
+        id: upload_to_oss
+        uses: tvrcgo/upload-to-oss@master
+        with:
+          key-id: ${{ secrets.CHIPS_OSS_KEY_ID }}
+          key-secret: ${{ secrets.CHIPS_OSS_KEY_SECRET }}
+          region: ${{ inputs.region }}
+          bucket: ${{ inputs.bucket }}
+          assets: |
+            build/**:${{ inputs.oss-path }}

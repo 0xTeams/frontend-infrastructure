@@ -1,0 +1,28 @@
+name: deployment
+
+on:
+  workflow_call:
+    inputs:
+      deploy-server-path:
+        required: true
+        type: string
+        
+jobs:
+  deployment:
+    needs: upload
+    runs-on: ubuntu-latest
+    # environment: development
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-artifact-index.html
+          path: build
+
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+            SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+            SOURCE: "build/index.html"
+            REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+            REMOTE_USER: ${{ secrets.REMOTE_USER }}
+            TARGET: ${{ inputs.deploy-server-path }}
