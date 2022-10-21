@@ -12,6 +12,9 @@ on:
       public-path-prefix:
         required: true
         type: string
+    secrets:
+      NPM_AUTH_TOKEN:
+        required: true
     outputs:
       application_version:
         description: "应用版本"
