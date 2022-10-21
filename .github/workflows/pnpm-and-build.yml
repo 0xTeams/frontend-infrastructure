@@ -64,6 +64,7 @@ jobs:
       - name: Build
         env:
           PUBLIC_PATH: ${{ inputs.public-path-prefix }}${{ steps.bash.outputs.application_version }}/
+          NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
         run: ${{ inputs.build-run }}
 
       - uses: actions/upload-artifact@v3
