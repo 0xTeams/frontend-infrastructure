@@ -14,7 +14,7 @@ on:
         type: string
     secrets:
       NPM_AUTH_TOKEN:
-        required: true
+        description: "npm auth token"
     outputs:
       application_version:
         description: "应用版本"
